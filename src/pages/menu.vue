@@ -9,7 +9,7 @@ const filteredMenu = computed(() => {
     return foodStore.foods;
   }
   return foodStore.foods.filter((menu) => menu.type === filterMenu.value);
-}); 
+});
 
 </script>
 <template>

@@ -1,4 +1,5 @@
 import { call, db } from "@/firebase"
+import { collection, query, where, onSnapshot } from "firebase/firestore";
 
 export const useTableStore = defineStore({
   id: "table",
@@ -20,10 +21,13 @@ export const useTableStore = defineStore({
     },
     async fetchTables(){
       this.loading = true
-      let res = await call("listTables", {});
-      if(res.success){
-        this.tables = res.data
-      }
+      const q = query(collection(db, "tables"));
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        this.tables = []
+        querySnapshot.forEach((doc) => {
+          this.tables.push(doc.data())
+        });
+      });
       this.loading = false
     },
     async reserveTable(data){
@@ -38,8 +42,7 @@ export const useTableStore = defineStore({
       this.loading = false
     },
 
-    async addFood(tablename, food) {
-      this.loading = true;
+    addFood(tablename, food) {
       const table = this.tables.find(table => table.name === tablename)
       if(table){
         const index = table.foods.findIndex(item => item.name === food.name)
@@ -50,12 +53,7 @@ export const useTableStore = defineStore({
         }
         //calculate total
         table.total = table.foods.reduce((acc, item) => acc + item.price * item.quantity, 0)
-        let res = await call("addFood", data);
-        if(!res.success){
-          console.log("error adding food")
-        }
       }
-      this.loading = false;
     },
 
     clearTable(tablename) {

@@ -4,18 +4,15 @@ import { connectFirestoreEmulator, getFirestore } from "firebase/firestore"
 import { connectFunctionsEmulator, getFunctions, httpsCallable } from "firebase/functions"
 import { connectStorageEmulator, getStorage } from "firebase/storage"
 
-//------------------------//
 const firebaseConfig = {
-  apiKey: "AIzaSyB28CC_qHK8TCvE45KBNO3EdRj4XkC_rh4",
-  authDomain: "cp422021-paleerat.firebaseapp.com",
-  databaseURL: "https://cp422021-paleerat-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "cp422021-paleerat",
-  storageBucket: "cp422021-paleerat.firebasestorage.app",
-  messagingSenderId: "398106107280",
-  appId: "1:398106107280:web:c629a216be03d532726715",
-  measurementId: "G-K5039YJSC0"
+  apiKey: "AIzaSyBKQuc1Hta6EI7ZVQ_94F95zy50P6uzu48",
+  authDomain: "cp422021-demo.firebaseapp.com",
+  databaseURL: "https://cp422021-demo-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "cp422021-demo",
+  storageBucket: "cp422021-demo.appspot.com",
+  messagingSenderId: "497277248028",
+  appId: "1:497277248028:web:dec0db28966649285cb5d9"
 };
-//------------------------//
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig)
@@ -50,3 +47,4 @@ const call = async(functionName, params) => {
 }
 
 export { app, auth, call, db, functions, storage }
+

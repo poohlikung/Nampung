@@ -1,4 +1,5 @@
 <script setup>
+import { onMounted, ref, computed } from 'vue'
 import InfoCard from "@/components/cards/InfoCard.vue";
 import TableInfoCard from "@/components/cards/TableInfoCard.vue";
 import AddDialog from "@/components/dialogs/AddDialog.vue";
@@ -6,6 +7,7 @@ import AddDialog from "@/components/dialogs/AddDialog.vue";
 import { useTableStore } from "@/store/table";
 const tableStore = useTableStore();
 const showAddTableDialog = ref(false);
+
 const tableInitData = ref({
   name : "",
   checkin : "",
@@ -14,6 +16,7 @@ const tableInitData = ref({
   status : "ready",
   foods : []
 });
+
 const formats = [
   {md: 12, datatype: 'text', target: 'name', validation: ['required'], props: { label: 'ชื่อโต๊ะ *', clearable: true } },  
 ]
@@ -21,17 +24,24 @@ const formats = [
 const reserveTable = async (table) => {
   await tableStore.reserveTable(table);
 };
+
 const availableTable = computed(() => {
   return tableStore.tables.filter((table) => table.status == 'ready');
 });
 const reservedTable = computed(() => {
-  return tableStore.tables.filter((table) => table.status == 'reserve');
+  return tableStore.tables.filter((table) => table.status == 'reserved');
 });
 const addTable = async (data) => {
   await tableStore.addTable(data);
   showAddTableDialog.value = false;
 };
+
+// ✅ โหลดข้อมูลโต๊ะตอนเปิดหน้า
+onMounted(() => {
+  tableStore.fetchTables();
+});
 </script>
+
 <template>
   <VCard :loading="tableStore.loading" :disabled="tableStore.loading">
     <VCardItem>
@@ -75,7 +85,7 @@ const addTable = async (data) => {
               @click="showAddTableDialog = true"
             >
               <VIcon>mdi-plus</VIcon>
-              เพิมโต๊ะใหม่
+              เพิ่มโต๊ะใหม่
             </VBtn>
           </VCard>
         </VCol>
@@ -85,7 +95,7 @@ const addTable = async (data) => {
   <VCard class="mt-8">
     <VCardText>
       <VRow>
-        <VCol v-for="table in tableStore.tables" cols="3" class="d-flex align-center justify-center">
+        <VCol v-for="table in tableStore.tables" :key="table.name" cols="3" class="d-flex align-center justify-center">
           <v-btn v-if="table.status=='ready'" @click="reserveTable(table)" size="x-large" block prepend-icon="mdi-table" height="200">            
             {{ table.name }} - {{ table.status }}
           </v-btn>

@@ -15,18 +15,18 @@ const props = defineProps({
   table: Object,
 });
 
-const onBill = (table)=>{
-  transactionStore.addTransaction({
+const onBill = async(table)=>{
+  await transactionStore.addTransaction({
     table : table.name,
     foods : table.foods,
     total : table.total,
     type : 'income',
     category : 'food',
   });
-  tableStore.clearTable(table.name);
+  await tableStore.fetchTables();
   showBillDialog.value = false;
 }
-const onAddFood = async (menu)=>{
+const onAddFood =  async (menu)=>{
   await tableStore.addFood(props.table.name, menu);
   showMenuDialog.value = false;
 }

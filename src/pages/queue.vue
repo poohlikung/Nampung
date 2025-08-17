@@ -1,18 +1,15 @@
 <script setup>
-import InfoCard from "@/components/cards/InfoCard.vue";
 import moment from "moment";
 import 'moment/dist/locale/th';
+import InfoCard from "@/components/cards/InfoCard.vue";
 
 import { useQueueStore } from "@/store/queue";
 import { useTableStore } from "@/store/table";
-import { computed } from "vue";
 
 moment.locale('th');
 
 const queueStore = useQueueStore();
 const tableStore = useTableStore();
-
-
 
 const addQueueDialog = ref(false);
 const quueuInitData = ref({
@@ -28,6 +25,8 @@ const formats = [
   {md: 6, datatype: 'text', target: 'phone', props: { label: 'เบอร์โทรศัพท์', clearable: true } },
 ]
 const enqueue = async (queue) => {
+  queue.datetime = moment().toISOString();  
+  queue.timestamp = moment().toISOString();
   await queueStore.enqueue(queue);
 };
 const dequeue = async (target) => {
@@ -40,8 +39,6 @@ const dequeue = async (target) => {
 
 const tableAvailable = computed(() => {
   return tableStore.tables.filter(table => table.status !== 'reserved').length;
-  // return tableStore.table.filter(table => table.stats !== 'reserved').length;
-  // return tableStore.tables.filter(ta)
 });
 </script>
 <template>
@@ -74,7 +71,7 @@ const tableAvailable = computed(() => {
             <VBtn                
               class="fill-height"
               block
-              color="primary"
+              color="#69025F"
               @click="addQueueDialog = true"
             >
               <VIcon>mdi-plus</VIcon>
@@ -86,7 +83,7 @@ const tableAvailable = computed(() => {
           <VCard class="align-center justify-center d-flex fill-height">
             <VBtn                
               class="fill-height"
-              color="primary"
+              color="pink"
               block
               @click="dequeue()"
             >
@@ -102,13 +99,13 @@ const tableAvailable = computed(() => {
     <VList lines="two">
       <VListItem v-for="(item,index) in queueStore.queues">
         <VListItemTitle>{{item.name}}</VListItemTitle>
-        <VListItemSubtitle>เข้ามาเมื่อ {{ new Date(item.timestamp).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' }) }} ทั้งหมด {{ item.people }} คน</VListItemSubtitle>
+        <VListItemSubtitle>เข้ามาเมื่อ {{ moment(item.datetime).format('MMMM D เวลา HH:mm:ss') }} ทั้งหมด {{ item.people }} คน</VListItemSubtitle>
         <template v-slot:prepend>
           <VAvatar color="primary"><span class="text-h5 text-white">{{ index+1 }}</span></VAvatar>
         </template>
         <template v-slot:append>
-          <span class="text-h6 me-2">รอมาแล้ว {{ moment(item.timestamp).fromNow() }} </span>
-          <VBtn @click="dequeue(item)" color="success" class="me-2"><VIcon>mdi-account-voice</VIcon> เรียกคิว</VBtn>
+          <span class="text-h6 me-2">รอมาแล้ว {{ moment(item.timestamp).fromNow() }}</span>
+          <VBtn @click="dequeue(item)" color="#035707" class="me-2"><VIcon>mdi-account-voice</VIcon> เรียกคิว</VBtn>
         </template>
       </VListItem>      
     </VList>    
